@@ -1,24 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense, lazy } from "react";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+
+const Login = lazy(() => import("./Components/Login/Login"));
+const Product = lazy(() => import("./Components/ProductPages/Products"));
+const PrivateRoute = lazy(() => import("./Components/AppLayout/PrivateRoute"));
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/dashboard/products" />}></Route>
+        <Route path="/dashboard" Component={PrivateRoute}>
+          <Route path="products" Component={Product}></Route>
+        </Route>
+        <Route path="/login" Component={Login}></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

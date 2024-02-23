@@ -1,0 +1,19 @@
+.login-main-container{
+    background-color: rgb(205, 253, 217);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.login-form-container{
+    border: 1px solid black;
+    width: 400px;
+    margin: auto;
+    text-align: center;
+    padding: 10px;
+}
+
+.antd-form{
+    padding: 5%;
+    
+}
