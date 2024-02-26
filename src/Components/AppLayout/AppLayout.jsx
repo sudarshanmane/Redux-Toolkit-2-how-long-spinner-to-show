@@ -1,77 +1,35 @@
-import React, { Suspense, useEffect, useState } from "react";
-import { Layout, Space, Spin } from "antd";
+import React, { Suspense, startTransition, useEffect, useState } from "react";
+import { Layout, Spin, Button } from "antd";
 import { Link, Outlet } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { getUser } from "../../helpers/helpers";
+import { useNavigate } from "react-router";
 const { Header, Content } = Layout;
 
 const AppLayout = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  useEffect(() => {
-    function buildMenu(menuItems, parentElement) {
-      menuItems.forEach((item) => {
-        const menuItem = document.createElement("div");
-        menuItem.textContent = item.sectionName;
-        menuItem.classList.add("menu-item");
+  const navigate = useNavigate();
 
-        if (item.subsections.length > 0) {
-          menuItem.classList.add("has-submenu");
-          const submenu = document.createElement("div");
-          submenu.classList.add("submenu");
-          buildMenu(item.subsections, submenu);
-          menuItem.appendChild(submenu);
-        }
+  // logout section
+  let logoutInterval;
+  const redirectToLogin = () => {
+    logoutInterval = setInterval(() => {
+      if (getUser() === "undefined") {
+        navigate("/login");
+        clearInterval(logoutInterval);
+      }
+    });
 
-        parentElement.appendChild(menuItem);
-      });
-    }
+    return () => {
+      clearInterval(logoutInterval);
+    };
+  };
 
-    const sideMenu = document.createElement("div");
-    sideMenu.classList.add("side-menu");
-    buildMenu(
-      [
-        {
-          sectionName: "Main",
-          subsections: [
-            {
-              sectionName: "Dashboard",
-              subsections: [
-                { sectionName: "Admin Dashboard", subsections: [] },
-                { sectionName: "Employee Dashboard", subsections: [] },
-              ],
-            },
-          ],
-        },
-        {
-          sectionName: "Chat",
-          subsections: [
-            {
-              sectionName: "Video Call",
-              subsections: [],
-            },
-            {
-              sectionName: "Voice Call",
-              subsections: [
-                { sectionName: "Voice call 1", subsections: [] },
-                { sectionName: "Voice call 2", subsections: [] },
-                { sectionName: "Voice call 3", subsections: [] },
-              ],
-            },
-            {
-              sectionName: "Calling",
-              subsections: [
-                { sectionName: "call 1", subsections: [] },
-                { sectionName: "call 2", subsections: [] },
-                { sectionName: "  call 3", subsections: [] },
-              ],
-            },
-          ],
-        },
-      ],
-      sideMenu
-    );
-    document.body.appendChild(sideMenu);
-  }, []);
+  const handleLogout = () => {
+    localStorage.clear();
+    redirectToLogin();
+  };
 
   return (
     <Spin spinning={isLoading}>
@@ -79,11 +37,12 @@ const AppLayout = () => {
         <Header
           style={{
             border: "1px solid black",
-            height: "40px",
-            display: "flex",
+            alignContent: "center",
+            textAlign: "center",
           }}
+          className="flex"
         >
-          <Space>
+          <div className="flex mr-auto">
             <Link to={"/dashboard/products"}>
               <span>Home</span>
             </Link>
@@ -96,9 +55,13 @@ const AppLayout = () => {
             <Link to={"/dashboard"}>
               <span>Home</span>
             </Link>
-          </Space>
+          </div>
+          <div className="display flex h-fit">
+            <Button onClick={handleLogout} className="border-2 bg-red-500">
+              LogOut
+            </Button>
+          </div>
         </Header>
-
         <Content
           style={{
             border: "1px solid black",

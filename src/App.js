@@ -1,7 +1,6 @@
-import React, { Suspense, lazy } from "react";
+import React, { lazy } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-
-const Login = lazy(() => import("./Components/Login/Login"));
+import Login from "./Components/Login/Login";
 const Product = lazy(() => import("./Components/ProductPages/Products"));
 const PrivateRoute = lazy(() => import("./Components/AppLayout/PrivateRoute"));
 

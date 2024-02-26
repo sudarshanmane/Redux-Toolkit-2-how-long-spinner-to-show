@@ -37,7 +37,7 @@ export const getAllProductsDesc = createAsyncThunk(
             message.error(error.message);
             resolve({ data: [] });
           }
-        }, 5000); // 10 seconds delay
+        }, 5000);
       });
     } catch (error) {}
   }

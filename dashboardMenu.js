@@ -42,6 +42,5 @@ let menuItems = [
 ];
 
 menuItems.forEach((el) => {
-    console.log(el);
-    
+  console.log(el);
 });

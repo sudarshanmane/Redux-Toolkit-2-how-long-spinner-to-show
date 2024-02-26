@@ -1,31 +1,39 @@
 import { Form, Input, Button } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { startTransition, useEffect } from "react";
 import "./login.css";
-import { userLogin } from "../../Store/Axios/login";
 import { useNavigate } from "react-router";
 import { getUser, setUser } from "../../helpers/helpers";
+import { useDispatch, useSelector } from "react-redux";
+import { postLogin, setLoginFalse } from "./loginSlice";
 
 const Login = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const onFinish = async (vals) => {
-    navigate("/dashboard");
-    const res = await userLogin({ URL: "/auth/login", payload: vals });
-    if (res.status === 200) {
-      setUser(res);
-    }
+  const loginSelector = useSelector((state) => state?.login);
+  const onFinish = (values) => {
+    dispatch(postLogin({ url: "/auth/login", values }));
   };
 
-  if (getUser()) {
-    console.log("getUser", getUser());
-  }
+  useEffect(() => {
+    let id;
+    id = setInterval(() => {
+      if (getUser() !== "undefined") {
+        startTransition(() => {
+          navigate("/dashboard/products");
+          clearInterval(id);
+        });
+      }
+    });
 
-  setInterval(() => {
-    if (getUser()) {
-      navigate("/dashboard");
-    }
-  });
+    if (loginSelector?.loginRes)
+      dispatch(setLoginFalse({ type: "login/setLoginFalse" }));
+
+    return () => {
+      clearInterval(id);
+    };
+  }, []);
 
   return (
     <main className="login-main-container">
@@ -42,8 +50,12 @@ const Login = () => {
               <Input></Input>
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit">
-                submit
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loginSelector?.loading}
+              >
+                {loginSelector?.loading ? "" : "submit"}
               </Button>
             </Form.Item>
           </Form>
